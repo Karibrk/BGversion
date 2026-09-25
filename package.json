@@ -1,0 +1,14 @@
+{
+  "name": "bernov-dragons-gpt",
+  "version": "1.3.8.2",
+  "private": true,
+  "type": "module",
+  "dependencies": {
+    "@huggingface/inference": "latest",
+    "@modelcontextprotocol/server": "^2.1.0",
+    "@vercel/blob": "latest",
+    "jose": "^6.2.12",
+    "mcp-handler": "^2.2.0",
+    "zod": "^4.6.5"
+  }
+}
