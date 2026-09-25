@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Bernov & Dragons — Deník v2</title>
+  <style>
+    :root {
+      --bg: #0b0d12;
+      --bg-2: #111720;
+      --panel: rgba(19, 25, 33, 0.88);
+      --panel-strong: #171f2a;
+      --line: #2d3944;
+      --gold: #d7b571;
+      --gold-soft: #f0dba1;
+      --sage: #7ec0ad;
+      --red: #d06d67;
+      --text: #edf2f6;
+      --muted: #b4bec7;
+      --steel: #8f9aaa;
+      --shadow: rgba(0,0,0,0.38);
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      background:
+        radial-gradient(circle at top, rgba(215,181,113,0.12), transparent 25%),
+        linear-gradient(180deg, #0a0d12 0%, #0f151d 100%);
+      color: var(--text);
+      font-family: Georgia, "Times New Roman", serif;
+    }
+
+    body {
+      padding: 28px 18px 52px;
+    }
+
+    .app {
+      max-width: 1160px;
+      margin: 0 auto;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      background: rgba(12, 16, 22, 0.72);
+      box-shadow: 0 18px 50px var(--shadow);
+      overflow: hidden;
+      backdrop-filter: blur(10px);
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      padding: 18px 28px 16px;
+      border-bottom: 1px solid var(--line);
+      background: rgba(17, 23, 32, 0.92);
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-mark {
+      width: 42px;
+      height: 42px;
+      display: grid;
+      place-items: center;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(215,181,113,0.18), rgba(126,192,173,0.15));
+      border: 1px solid rgba(215,181,113,0.55);
+      color: var(--gold-soft);
+      font-size: 1.25rem;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.35rem, 2vw, 2rem);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+
+    .sub {
+      margin-left: 4px;
+      color: var(--muted);
+      font-size: 0.72rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      opacity: 0.9;
+    }
+
+    .top-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .pill,
+    button,
+    select,
+    textarea,
+    input {
+      font: inherit;
+    }
+
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 12px;
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      background: rgba(18, 25, 32, 0.8);
+      color: var(--muted);
+      font-size: 0.75rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .pill strong {
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 14px 28px;
+      background: rgba(14, 19, 25, 0.88);
+      border-bottom: 1px solid var(--line);
+    }
+
+    .tab {
+      appearance: none;
+      border: 1px solid transparent;
+      background: transparent;
+      color: var(--muted);
+      padding: 10px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      transition: 0.2s ease;
+    }
+
+    .tab.active {
+      border-color: rgba(215,181,113,0.6);
+      background: rgba(215,181,113,0.08);
+      color: var(--text);
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: 320px minmax(0, 1fr);
+      gap: 18px;
+      padding: 20px 28px 28px;
+    }
+
+    .side,
+    .main {
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      padding: 18px;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.02);
+    }
+
+    .panel h2,
+    .panel h3 {
+      margin: 0 0 12px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .sheet-head {
+      display: grid;
+      grid-template-columns: 82px 1fr;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 18px;
+    }
+
+    .portrait {
+      width: 82px;
+      height: 82px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(126,192,173,0.28), rgba(215,181,113,0.20));
+      border: 1px solid rgba(215,181,113,0.4);
+      display: grid;
+      place-items: center;
+      font-size: 2rem;
+      color: var(--gold-soft);
+    }
+
+    .name-line {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+      margin-bottom: 4px;
+    }
+
+    .name-line strong {
+      font-size: 1.4rem;
+    }
+
+    .level {
+      border: 1px solid rgba(126,192,173,0.5);
+      color: var(--sage);
+      background: rgba(126,192,173,0.12);
+      border-radius: 999px;
+      padding: 4px 9px;
+      font-size: 0.72rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .meta {
+      color: var(--muted);
+      font-size: 0.8rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 10px;
+    }
+
+    .stat-box {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(255,255,255,0.02);
+      padding: 10px 8px 8px;
+      text-align: center;
+    }
+
+    .stat-box span {
+      display: block;
+      font-size: 0.66rem;
+      letter-spacing: 0.08em;
+      color: var(--steel);
+      text-transform: uppercase;
+      margin-bottom: 5px;
+    }
+
+    .stat-box strong {
+      font-size: 1.15rem;
+      color: var(--text);
+    }
+
+    .equipment-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .slot {
+      border: 1px solid var(--line);
+      background: rgba(16, 22, 27, 0.9);
+      border-radius: 12px;
+      padding: 10px;
+    }
+
+    .slot-label {
+      display: block;
+      font-size: 0.64rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--steel);
+      margin-bottom: 8px;
+    }
+
+    .item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      min-height: 42px;
+    }
+
+    .item-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 9px;
+      border: 1px solid rgba(215,181,113,0.4);
+      background: linear-gradient(135deg, rgba(215,181,113,0.15), rgba(126,192,173,0.12));
+      display: grid;
+      place-items: center;
+      font-size: 1rem;
+      color: var(--gold-soft);
+      flex-shrink: 0;
+    }
+
+    .item strong {
+      display: block;
+      font-size: 0.88rem;
+    }
+
+    .item small {
+      color: var(--muted);
+      display: block;
+      font-size: 0.68rem;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .summary-cards {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .mini-card {
+      border: 1px solid var(--line);
+      background: rgba(17, 22, 28, 0.9);
+      border-radius: 12px;
+      padding: 12px 14px;
+    }
+
+    .mini-card .kicker {
+      display: block;
+      font-size: 0.62rem;
+      letter-spacing: 0.1em;
+      color: var(--steel);
+      text-transform: uppercase;
+      margin-bottom: 8px;
+    }
+
+    .mini-card strong {
+      display: block;
+      font-size: 1.2rem;
+      margin-bottom: 4px;
+    }
+
+    .mini-card span {
+      color: var(--muted);
+      font-size: 0.75rem;
+    }
+
+    .entry-box {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 10px;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    textarea {
+      width: 100%;
+      min-height: 126px;
+      resize: vertical;
+      background: rgba(10, 14, 18, 0.9);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      color: var(--text);
+      padding: 12px 14px;
+      line-height: 1.6;
+      font-size: 0.96rem;
+    }
+
+    button {
+      border: 1px solid rgba(215,181,113,0.68);
+      background: linear-gradient(180deg, rgba(215,181,113,0.14), rgba(215,181,113,0.08));
+      color: var(--gold-soft);
+      border-radius: 10px;
+      padding: 10px 14px;
+      cursor: pointer;
+      transition: transform 0.18s ease, border-color 0.18s ease;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      border-color: rgba(215,181,113,0.95);
+    }
+
+    .secondary {
+      border-color: var(--line);
+      background: rgba(255,255,255,0.02);
+      color: var(--muted);
+    }
+
+    .quote {
+      border-left: 2px solid rgba(215,181,113,0.8);
+      padding-left: 12px;
+      color: var(--text);
+      line-height: 1.75;
+      font-size: 1rem;
+      margin-top: 6px;
+    }
+
+    .helper-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      border-radius: 999px;
+      padding: 5px 9px;
+      border: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.68rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .tag.good { border-color: rgba(126,192,173,0.5); color: var(--sage); }
+    .tag.warn { border-color: rgba(208,109,103,0.5); color: var(--red); }
+    .tag.gold { border-color: rgba(215,181,113,0.48); color: var(--gold-soft); }
+
+    .notes-list {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .note {
+      border: 1px solid var(--line);
+      border-left: 3px solid var(--gold);
+      background: rgba(18,24,30,0.7);
+      border-radius: 10px;
+      padding: 12px 12px 10px;
+    }
+
+    .note strong {
+      display: block;
+      margin-bottom: 4px;
+    }
+
+    .note small {
+      color: var(--muted);
+      display: block;
+      margin-bottom: 4px;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      font-size: 0.64rem;
+    }
+
+    .note p {
+      margin: 0;
+      color: var(--muted);
+      line-height: 1.6;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin-top: 12px;
+    }
+
+    .feature {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(17, 22, 28, 0.8);
+      padding: 12px 12px 10px;
+    }
+
+    .feature .icon {
+      font-size: 1.3rem;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .feature strong {
+      display: block;
+      margin-bottom: 4px;
+      font-size: 0.96rem;
+    }
+
+    .feature p {
+      margin: 0;
+      color: var(--muted);
+      font-size: 0.8rem;
+      line-height: 1.55;
+    }
+
+    @media (max-width: 900px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .feature-grid,
+      .summary-cards,
+      .equipment-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    @media (max-width: 620px) {
+      body { padding: 12px 12px 36px; }
+      .topbar, .toolbar, .layout { padding-left: 16px; padding-right: 16px; }
+      .topbar { align-items: flex-start; flex-direction: column; }
+      .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+      .entry-box { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">✦</div>
+        <div>
+          <h1>Bernov &amp; Dragons</h1>
+          <div class="sub">Deník postavy · V1.3.9.0.gpt</div>
+        </div>
+      </div>
+      <div class="top-actions">
+        <div class="pill"><span>Aktualizace</span> <strong>Ráno</strong></div>
+        <div class="pill"><span>Jas</span> <strong>24%</strong></div>
+      </div>
+    </header>
+
+    <nav class="toolbar" aria-label="Navigace">
+      <button class="tab active" type="button">Hra</button>
+      <button class="tab" type="button">Postava</button>
+      <button class="tab" type="button">Kouzla</button>
+      <button class="tab" type="button">Domov</button>
+      <button class="tab" type="button">Střípky</button>
+      <button class="tab" type="button">Kronika</button>
+      <button class="tab" type="button">Úkoly</button>
+    </nav>
+
+    <main class="layout">
+      <aside class="side">
+        <section class="panel">
+          <div class="sheet-head">
+            <div class="portrait">⚔</div>
+            <div>
+              <div class="name-line">
+                <strong>Karibrk</strong>
+                <span class="level">Lv. 7</span>
+              </div>
+              <div class="meta">Zvěd · Kniha temnot · Mudr</div>
+            </div>
+          </div>
+
+          <div class="stats">
+            <div class="stat-box"><span>HP</span><strong>27</strong></div>
+            <div class="stat-box"><span>Živly</span><strong>8</strong></div>
+            <div class="stat-box"><span>Jas</span><strong>74</strong></div>
+            <div class="stat-box"><span>Stav</span><strong>+2</strong></div>
+          </div>
+
+          <div class="helper-row" style="margin-top: 14px;">
+            <span class="tag good">Zdravý</span>
+            <span class="tag gold">Vyšší důvěra</span>
+            <span class="tag warn">Náročný den</span>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h3>Výbava</h3>
+          <div class="equipment-grid">
+            <div class="slot">
+              <span class="slot-label">Hlava</span>
+              <div class="item">
+                <div class="item-icon">🛡</div>
+                <div>
+                  <strong>Kožená čapka</strong>
+                  <small>+1 odolnost</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="slot">
+              <span class="slot-label">Tělo</span>
+              <div class="item">
+                <div class="item-icon">🧥</div>
+                <div>
+                  <strong>Vězeňská tunika</strong>
+                  <small>Vystárla</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="slot">
+              <span class="slot-label">Nástroj</span>
+              <div class="item">
+                <div class="item-icon">✧</div>
+                <div>
+                  <strong>Hodiny osudu</strong>
+                  <small>Zaznamenáno</small>
+                </div>
+              </div>
+            </div>
+
+            <div class="slot">
+              <span class="slot-label">Ruka</span>
+              <div class="item">
+                <div class="item-icon">🗡</div>
+                <div>
+                  <strong>Dráždivý meč</strong>
+                  <small>+3 úder</small>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      </aside>
+
+      <section class="main">
+        <div class="summary-cards">
+          <div class="mini-card">
+            <span class="kicker">Dnes</span>
+            <strong>3 kroky</strong>
+            <span>Věnováno půlce cesty</span>
+          </div>
+          <div class="mini-card">
+            <span class="kicker">Vybavení</span>
+            <strong>8 položek</strong>
+            <span>2 nová, 4 připravené</span>
+          </div>
+          <div class="mini-card">
+            <span class="kicker">Kronika</span>
+            <strong>12 zápisů</strong>
+            <span>Poslední: 21:40</span>
+          </div>
+        </div>
+
+        <section class="panel">
+          <h2>Deník záznamu</h2>
+          <div class="entry-box">
+            <textarea aria-label="Zápis do deníku">V tohle ráno jsem prošel prázdnou ulicí za městem a slyšel, jak se město chvěje ve svém spánku. Zlato v kapsách se zdálo být těžší než vzduch. V zrcadle dveří se mihnul stín, který se podobá mému příteli ze starých stránek, ale nebyl to on. Sliboval nová jména a nové stíny v podzemí.</textarea>
+            <button type="button">Uložit</button>
+          </div>
+          <div class="helper-row">
+            <span class="tag good">Záznam uložen</span>
+            <span class="tag gold">Kanon zachován</span>
+            <span class="tag">Poznámka: 2 min</span>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h3>Aktuální hádanka</h3>
+          <div class="quote">
+            „Svědectví se skrývá v každém stínu, ale jen ten, kdo ví, kde se odráží v kameni, najde ten pravý klíč.“
+          </div>
+          <div class="helper-row">
+            <span class="tag gold">Kapitola 4</span>
+            <span class="tag">Místo: Brány Vědomí</span>
+            <span class="tag">Pramen: Kniha Střepin</span>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h3>Poslední poznámky</h3>
+          <div class="notes-list">
+            <div class="note">
+              <small>13:20 · Vzpomínka</small>
+              <strong>Brána v údolí</strong>
+              <p>Všechny zvuky tady zněly jako zatajené přísahy. Když jsem se přiblížil k kamennému oblouku, mohl jsem cítit i tenká vlákna kouře v městě.</p>
+            </div>
+            <div class="note">
+              <small>18:05 · Kniha</small>
+              <strong>Stínový protokol</strong>
+              <p>Přepsaný fragment naznačuje, že pravá odpověď leží v jednom z vybledlých podpisů. Někdo chtěl, aby jsme ji hledali v temných oknech.</p>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel">
+          <h3>Rychlé nástroje</h3>
+          <div class="feature-grid">
+            <div class="feature">
+              <span class="icon">🧭</span>
+              <strong>Mapa</strong>
+              <p>Označené body setkání, vstup do podzemí a síť úklidových cest.</p>
+            </div>
+            <div class="feature">
+              <span class="icon">📜</span>
+              <strong>Kronika</strong>
+              <p>Historie, přelomy a změny, které nyní ovlivňují další rozhodnutí.</p>
+            </div>
+            <div class="feature">
+              <span class="icon">✨</span>
+              <strong>Výbava</strong>
+              <p>Souhrn všech předmětů, run a zásob, které se staly součástí cesty.</p>
+            </div>
+          </div>
+        </section>
+      </section>
+    </main>
+  </div>
+</body>
+</html>
